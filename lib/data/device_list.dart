@@ -1,50 +1,36 @@
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:smarthome/models/device.dart';
+import 'package:http/http.dart' as http;
+
+const smartHomeApi = 'http://localhost:3000/devices';
 
 class DeviceList extends ChangeNotifier {
-  final List<Device> _deviceList = [
-    Device(
-        name: 'Stehlampe',
-        status: false,
-        beschreibung: 'Warm 1 (2700 K)',
-        deviceType: DeviceType.switchControl,
-        icon: Icons.lightbulb),
-    Device(
-        name: 'Terassenlichter',
-        status: true,
-        beschreibung: '2 Geräte',
-        deviceType: DeviceType.switchControl,
-        icon: Icons.electrical_services),
-    Device(
-        name: 'Kinderzimmer',
-        status: 21.5,
-        deviceType: DeviceType.thermometer,
-        beschreibung: '20.0 °C',
-        icon: Icons.gradient),
-    Device(
-        name: 'Wohnzimmer',
-        status: 20.5,
-        deviceType: DeviceType.thermometer,
-        beschreibung: '19.0 °C',
-        icon: Icons.gradient),
-    Device(
-      name: 'Waschmaschine',
-      status: true,
-      deviceType: DeviceType.switchControl,
-      beschreibung: 'Leistung 12,34 W',
-      icon: Icons.power_settings_new_outlined,
-    ),
-    Device(
-        name: 'Dachfenster',
-        beschreibung: 'offen',
-        deviceType: DeviceType.statusDevice,
-        icon: Icons.door_back_door),
-  ];
+  final List<Device> _deviceList = [];
 
   UnmodifiableListView<Device> get deviceList =>
       UnmodifiableListView(_deviceList);
+
+  void loadDeviceList() async {
+    var url = Uri.parse(smartHomeApi);
+    http.Response response = await http.get(url);
+    if (response.statusCode == 200) {
+      var devices = jsonDecode(response.body);
+      devices.forEach((device) {
+        _deviceList.add(Device(
+          name: device['name'],
+          deviceType: DeviceType.values.firstWhere((element) =>
+              element.toString() == 'DeviceType.' + device['type']),
+          beschreibung: device['roomTemp'].toString(),
+          status: device['tempTarget'].toDouble(),
+          icon: Icons.gradient,
+        ));
+      });
+      notifyListeners();
+    }
+  }
 
   void updateDevice(Device device) {
     device.status = !device.status;

@@ -68,7 +68,7 @@ class DeviceStatus extends StatelessWidget {
             value: device.status as bool,
             onChanged: changeCallback);
       default:
-        return const Text("");
+        return const Text('');
     }
   }
 

@@ -4,8 +4,20 @@ import 'package:smarthome/components/device_tile.dart';
 import 'package:smarthome/data/device_list.dart';
 import 'package:smarthome/models/device.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final deviceList = Provider.of<DeviceList>(context, listen: false);
+    deviceList.loadDeviceList();
+  }
 
   @override
   Widget build(BuildContext context) {
