@@ -20,6 +20,7 @@ class DeviceList extends ChangeNotifier {
       var devices = jsonDecode(response.body);
       devices.forEach((device) {
         _deviceList.add(Device(
+          id: device['id'],
           name: device['name'],
           deviceType: DeviceType.values.firstWhere((element) =>
               element.toString() == 'DeviceType.' + device['type']),
@@ -32,13 +33,20 @@ class DeviceList extends ChangeNotifier {
     }
   }
 
-  void updateDevice(Device device) {
+  void updateStatus(Device device) {
     device.status = !device.status;
     notifyListeners();
   }
 
-  void changeValue(Device device, double value) {
+  void updateThermometerValue(Device device, double value) {
     device.status = value;
     notifyListeners();
+  }
+
+  void saveNewThermometerValue(Device device) async {
+    var url = Uri.parse('$smartHomeApi/${device.id}');
+    await http.put(url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({'targetTemp': device.status.toString()}));
   }
 }

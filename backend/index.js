@@ -33,10 +33,13 @@ app.get('/devices', (req, res, next) => {
 })
 
 app.put('/devices/:id', (req, res, next) => {
+	console.log(req.params.id);
+	console.log(devices);
 	const device = devices.find(a => a.id === req.params.id);
 	if (device === undefined) {
 		res.sendStatus(404);
 	} else {
+		console.log(req.params.id + " " + req.body.targetTemp);
 		const targetTemp = req.body.targetTemp;
 		f.setTempTarget(device.id, targetTemp);
 		res.sendStatus(200);

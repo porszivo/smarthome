@@ -115,7 +115,7 @@ class DeviceStatus extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           deviceIcon(),
-          deviceStatus((value) => {deviceList.updateDevice(device)})
+          deviceStatus((value) => {deviceList.updateStatus(device)})
         ],
       );
     });

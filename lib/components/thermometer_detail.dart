@@ -50,7 +50,7 @@ class ThermometerDetail extends StatelessWidget {
               child: Text('Aktuelle Temperatur: ${device.beschreibung}'),
               padding: const EdgeInsets.all(15),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Container(
@@ -67,15 +67,16 @@ class ThermometerDetail extends StatelessWidget {
                     Slider(
                       activeColor: getColor(device.status),
                       value: device.status,
-                      min: 15,
+                      min: 12,
                       max: 27,
-                      divisions: (27 - 15) * 2,
+                      divisions: (27 - 12) * 2,
                       label: device.status.toString(),
-                      onChanged: (val) => deviceList.changeValue(device, val),
+                      onChanged: (val) =>
+                          deviceList.updateThermometerValue(device, val),
                     ),
                   ],
                 )),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Expanded(
@@ -84,10 +85,15 @@ class ThermometerDetail extends StatelessWidget {
                 child: charts.LineChart(seriesList, animate: true),
               ),
             ),
-            Expanded(
-              child: Container(
-                child: Text('hi'),
-              ),
+            TextButton(
+              style: TextButton.styleFrom(
+                  primary: Colors.white,
+                  backgroundColor: Colors.lightBlueAccent),
+              onPressed: () {
+                deviceList.saveNewThermometerValue(device);
+                Navigator.pop(context);
+              },
+              child: const Text('Save'),
             )
           ],
         ),
